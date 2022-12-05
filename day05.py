@@ -12,17 +12,32 @@ class Solution(BaseSolution):
         state, moves = data
         for move in moves:
             self.do_move(state, move)
-        return "".join(state[key][0] for key in sorted(state))
+        return self.get_result(state)
 
     def part2(self, data):
-        pass
+        state, moves = data
+        for move in moves:
+            self.do_multi_move(state, move)
+        return self.get_result(state)
 
     # Helpers
 
+    def get_result(self, state):
+        return "".join(state[key][0] for key in sorted(state))
+
     def do_move(self, state, move):
         count, src, dst = move
-        for _ in range(int(count)):
-            state[dst].insert(0, state[src].pop(0))
+        count = int(count)
+        to_move = state[src][:count]
+        state[src] = state[src][count:]
+        state[dst] = to_move[::-1] + state[dst]
+
+    def do_multi_move(self, state, move):
+        count, src, dst = move
+        count = int(count)
+        to_move = state[src][:count]
+        state[src] = state[src][count:]
+        state[dst] = to_move + state[dst]
 
     def parse_diagram(self, diagram_str):
         *stacks, keys = [

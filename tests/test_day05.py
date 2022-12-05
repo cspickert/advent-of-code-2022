@@ -38,13 +38,13 @@ def test_example_part1(solution, example_data):
     assert solution.part1(example_data) == "CMZ"
 
 
-# def test_example_part2(solution, example_data):
-#     assert solution.part2(example_data) == 4
+def test_example_part2(solution, example_data):
+    assert solution.part2(example_data) == "MCD"
 
 
-# def test_part1(solution, real_data):
-#     assert solution.part1(real_data) == 494
+def test_part1(solution, real_data):
+    assert solution.part1(real_data) == "GFTNRBZPF"
 
 
-# def test_part2(solution, real_data):
-#     assert solution.part2(real_data) == 833
+def test_part2(solution, real_data):
+    assert solution.part2(real_data) == "VRQWPDSGP"
