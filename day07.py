@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import cached_property
 from typing import List, Optional, Union
 
 from base import BaseSolution
@@ -12,7 +13,7 @@ class Directory:
     parent: Optional[Directory]
     children: List[Union[File, Directory]] = field(default_factory=list)
 
-    @property
+    @cached_property
     def size(self):
         return sum(child.size for child in self.children)
 
@@ -26,6 +27,14 @@ class Directory:
         if size <= max_size:
             return size + child_directory_sizes
         return child_directory_sizes
+
+    @property
+    def descendant_directories(self):
+        result = [self]
+        for child in self.children:
+            if isinstance(child, Directory):
+                result.extend(child.descendant_directories)
+        return result
 
 
 @dataclass
@@ -48,7 +57,16 @@ class Solution(BaseSolution):
         return data.sum_directory_sizes(100000)
 
     def part2(self, data):
-        pass
+        total_space = 70000000
+        minimum_space = 30000000
+        unused_space = total_space - data.size
+        needed_space = minimum_space - unused_space
+
+        dir_sizes = [(d.name, d.size) for d in data.descendant_directories]
+        dir_sizes.sort(key=lambda item: item[1])
+        for _, size in dir_sizes:
+            if size >= needed_space:
+                return size
 
     # Helpers
 
