@@ -15,6 +15,19 @@ R 2"""
 
 
 @pytest.fixture
+def large_example_input():
+    return """\
+R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20"""
+
+
+@pytest.fixture
 def solution():
     from day09 import Solution
 
@@ -24,6 +37,11 @@ def solution():
 @pytest.fixture
 def example_data(solution, example_input):
     return solution.load_data(example_input)
+
+
+@pytest.fixture
+def large_example_data(solution, large_example_input):
+    return solution.load_data(large_example_input)
 
 
 @pytest.fixture
@@ -37,8 +55,12 @@ def test_example_part1(solution, example_data):
     assert solution.part1(example_data) == 13
 
 
-# def test_example_part2(solution, example_data):
-#     assert solution.part2(example_data) == 0
+def test_small_example_part2(solution, example_data):
+    assert solution.part2(example_data) == 1
+
+
+def test_large_example_part2(solution, large_example_data):
+    assert solution.part2(large_example_data) == 36
 
 
 def test_part1(solution, real_data):
