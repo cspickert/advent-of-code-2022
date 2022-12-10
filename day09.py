@@ -9,22 +9,26 @@ class Solution(BaseSolution):
         ]
 
     def part1(self, data):
-        state = (0, 0), (0, 0)
-        tails = {state[1]}
-        for direction, dist in data:
-            for _ in range(dist):
-                state = self.move(state, direction)
-                tails.add(state[1])
-        return len(tails)
+        return self.simulate(data, 2)
 
     def part2(self, data):
-        pass
+        return self.simulate(data, 10)
 
     # Helpers
 
+    def simulate(self, data, length):
+        state = [(0, 0)] * length
+        tails = {state[-1]}
+        for direction, dist in data:
+            for _ in range(dist):
+                state = self.move(state, direction)
+                tails.add(state[-1])
+        return len(tails)
+
     def move(self, state, direction):
-        prev_head, tail = state
-        (hr, hc) = prev_head
+        state = [*state]
+
+        (hr, hc) = state[0]
         if direction == "U":
             hr -= 1
         if direction == "L":
@@ -33,10 +37,17 @@ class Solution(BaseSolution):
             hr += 1
         if direction == "R":
             hc += 1
-        next_head = (hr, hc)
-        if self.should_move_tail(next_head, tail):
-            tail = prev_head
-        return (next_head, tail)
+
+        last = state[0]
+        state[0] = (hr, hc)
+
+        for i in range(1, len(state)):
+            tmp = state[i]
+            if self.should_move_tail(state[i - 1], state[i]):
+                state[i] = last
+            last = tmp
+
+        return state
 
     def should_move_tail(self, head, tail):
         (hr, hc) = head
