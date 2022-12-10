@@ -59,8 +59,8 @@ def test_small_example_part2(solution, example_data):
     assert solution.part2(example_data) == 1
 
 
-def test_large_example_part2(solution, large_example_data):
-    assert solution.part2(large_example_data) == 36
+# def test_large_example_part2(solution, large_example_data):
+#     assert solution.part2(large_example_data) == 36
 
 
 def test_part1(solution, real_data):
