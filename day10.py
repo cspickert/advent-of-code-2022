@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from itertools import chain
 
 from base import BaseSolution
 
@@ -7,22 +6,6 @@ from base import BaseSolution
 @dataclass
 class State:
     x: int = 1
-
-
-def noop():
-    def fn(state):
-        return
-        yield
-
-    return fn
-
-
-def addx(value):
-    def fn(state):
-        yield
-        state.x += value
-
-    return fn
 
 
 class Solution(BaseSolution):
@@ -34,16 +17,10 @@ class Solution(BaseSolution):
         cycle = 1
         total_strength = 0
         for instruction in data:
-            task = instruction(state)
-            while True:
-                try:
-                    next(task)
-                except StopIteration:
-                    break
-                finally:
-                    cycle += 1
-                    if (cycle - 20) % 40 == 0:
-                        total_strength += state.x * cycle
+            for _ in instruction(state):
+                if (cycle - 20) % 40 == 0:
+                    total_strength += state.x * cycle
+                cycle += 1
         return total_strength
 
     def part2(self, data):
@@ -54,6 +31,20 @@ class Solution(BaseSolution):
     def parse_instruction(self, line):
         line = line.split()
         if line[0] == "noop":
-            return noop()
+            return self.noop()
         if line[0] == "addx":
-            return addx(int(line[1]))
+            return self.addx(int(line[1]))
+
+    def noop(self):
+        def fn(state):
+            yield
+
+        return fn
+
+    def addx(self, value):
+        def fn(state):
+            yield
+            yield
+            state.x += value
+
+        return fn
