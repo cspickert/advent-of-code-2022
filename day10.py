@@ -1,4 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from typing import List, Tuple
 
 from base import BaseSolution
 
@@ -6,6 +7,10 @@ from base import BaseSolution
 @dataclass
 class State:
     x: int = 1
+    screen_pos: Tuple[int, int] = (0, 0)
+    screen: List[str] = field(
+        default_factory=lambda: [["." for x in range(40)] for y in range(6)]
+    )
 
 
 class Solution(BaseSolution):
@@ -24,7 +29,11 @@ class Solution(BaseSolution):
         return total_strength
 
     def part2(self, data):
-        pass
+        state = State()
+        for instruction in data:
+            for _ in instruction(state):
+                self.draw(state)
+        return "\n".join("".join(line) for line in state.screen)
 
     # Helpers
 
@@ -48,3 +57,16 @@ class Solution(BaseSolution):
             state.x += value
 
         return fn
+
+    def draw(self, state):
+        row, col = state.screen_pos
+        if col >= len(state.screen[row]):
+            col = 0
+            row += 1
+        if row >= len(state.screen):
+            row = 0
+        if col in range(state.x - 1, state.x + 2):
+            state.screen[row][col] = "#"
+        else:
+            state.screen[row][col] = "."
+        state.screen_pos = (row, col + 1)
