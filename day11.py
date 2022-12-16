@@ -69,26 +69,29 @@ class Solution(BaseSolution):
         return [Monkey.parse(block) for block in input.split("\n\n")]
 
     def part1(self, data):
-        self.do_rounds(data, 20)
+        return self.do_rounds(data, 20)
+
+    def part2(self, data):
+        # return self.do_rounds(data, 10000, reduce_worry=False)
+        pass
+
+    # Helpers
+
+    def do_rounds(self, data, num, reduce_worry=True):
+        for i in range(num):
+            self.do_round(data, reduce_worry=reduce_worry)
         inspection_counts = sorted(
             (monkey.inspection_count for monkey in data), reverse=True
         )
         return reduce(operator.mul, inspection_counts[:2])
 
-    def part2(self, data):
-        pass
-
-    # Helpers
-
-    def do_rounds(self, data, num):
-        for _ in range(num):
-            self.do_round(data)
-
-    def do_round(self, data):
+    def do_round(self, data, reduce_worry=True):
         for monkey in data:
             while monkey.items:
                 monkey.inspection_count += 1
                 item = monkey.items.pop(0)
-                worry = monkey.operation(item) // 3
+                worry = monkey.operation(item)
+                if reduce_worry:
+                    worry //= 3
                 target = monkey.condition(worry)
                 data[target].items.append(worry)

@@ -57,7 +57,7 @@ def test_example_part1(solution, example_data):
 
 
 # def test_example_part2(solution, example_data):
-#     assert solution.part2(example_data) == 0
+#     assert solution.part2(example_data) == 2713310158
 
 
 def test_part1(solution, real_data):
