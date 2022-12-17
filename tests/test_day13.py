@@ -60,5 +60,5 @@ def test_part1(solution, real_data):
     assert solution.part1(real_data) == 6420
 
 
-# def test_part2(solution, real_data):
-#     assert solution.part2(real_data) == 374400
+def test_part2(solution, real_data):
+    assert solution.part2(real_data) == 22000
