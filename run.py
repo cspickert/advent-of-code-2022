@@ -1,5 +1,8 @@
 import importlib
+import logging
 from argparse import ArgumentParser
+
+logging.basicConfig()
 
 
 def run(day_module):
