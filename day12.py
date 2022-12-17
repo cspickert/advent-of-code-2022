@@ -56,7 +56,7 @@ class Solution(BaseSolution):
             next_row, next_col = next_pos
             next_val = data[next_row][next_col]
 
-            if 0 <= (next_val - cur_val) <= 1:
+            if (next_val - cur_val) <= 1:
                 next_moves.append(next_pos)
 
         if not next_moves:
