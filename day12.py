@@ -1,3 +1,5 @@
+import heapq
+
 from base import BaseSolution
 
 
@@ -37,40 +39,34 @@ class Solution(BaseSolution):
     def find_shortest_path(self, data):
         start = self.find_start(data)
         end = self.find_end(data)
-        seen = {start}
-        return self.find_shortest_path_helper(data, start, end, seen)
 
-    def find_shortest_path_helper(self, data, start, end, seen):
         if start == end:
             return 0
 
-        cur_row, cur_col = start
-        cur_val = data[cur_row][cur_col]
+        heap = [(0, start)]
+        seen = {start}
 
-        next_moves = []
+        while heap:
+            for _ in range(len(heap)):
+                distance, cur_pos = heapq.heappop(heap)
+                cur_row, cur_col = cur_pos
+                cur_val = data[cur_row][cur_col]
 
-        for next_pos in self.get_adjacent_coords(data, start):
-            if next_pos in seen:
-                continue
+                for next_pos in self.get_adjacent_coords(data, cur_pos):
+                    next_row, next_col = next_pos
+                    next_val = data[next_row][next_col]
 
-            next_row, next_col = next_pos
-            next_val = data[next_row][next_col]
+                    if next_val - cur_val > 1:
+                        continue
 
-            if (next_val - cur_val) <= 1:
-                next_moves.append(next_pos)
+                    if next_pos == end:
+                        return distance + 1
 
-        if not next_moves:
-            return float("inf")
+                    elif next_pos not in seen:
+                        seen.add(next_pos)
+                        heapq.heappush(heap, (distance + 1, next_pos))
 
-        return 1 + min(
-            self.find_shortest_path_helper(
-                data,
-                next_pos,
-                end,
-                {*seen, start},
-            )
-            for next_pos in next_moves
-        )
+        return float("inf")
 
     def get_adjacent_coords(self, data, coords):
         row, col = coords
