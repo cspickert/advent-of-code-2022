@@ -1,5 +1,6 @@
 import json
 import logging
+from functools import cmp_to_key
 
 from base import BaseSolution
 
@@ -19,7 +20,9 @@ class Solution(BaseSolution):
         )
 
     def part2(self, data):
-        pass
+        data = [item for pair in data for item in pair] + [[[2]], [[6]]]
+        data.sort(key=cmp_to_key(lambda a, b: self.is_pair_in_order_helper((a, b))))
+        return (1 + data.index([[2]])) * (1 + data.index([[6]]))
 
     # Helpers
 
