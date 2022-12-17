@@ -1,6 +1,9 @@
 import json
+import logging
 
 from base import BaseSolution
+
+logger = logging.getLogger(__name__)
 
 
 class Solution(BaseSolution):
@@ -21,20 +24,25 @@ class Solution(BaseSolution):
     # Helpers
 
     def is_pair_in_order(self, pair):
-        return self.is_pair_in_order_helper(pair) < 0
+        result = self.is_pair_in_order_helper(pair) < 0
+        logger.debug(result)
+        return result
 
-    def is_pair_in_order_helper(self, pair):
+    def is_pair_in_order_helper(self, pair, indent=0):
         lhs, rhs = pair
+        logger.debug(f"{indent * '  '}- Compare {lhs} vs. {rhs}")
         if isinstance(lhs, int) or isinstance(rhs, int):
             if isinstance(lhs, list):
-                return self.is_pair_in_order_helper((lhs, [rhs]))
+                return self.is_pair_in_order_helper((lhs, [rhs]), indent=indent + 1)
             if isinstance(rhs, list):
-                return self.is_pair_in_order_helper(([lhs], rhs))
+                return self.is_pair_in_order_helper(([lhs], rhs), indent=indent + 1)
             return lhs - rhs
-        if len(lhs) > len(rhs):
-            return 1
         for lv, rv in zip(lhs, rhs):
-            result = self.is_pair_in_order_helper((lv, rv))
+            result = self.is_pair_in_order_helper((lv, rv), indent=indent + 1)
             if result != 0:
                 return result
-        return -1
+        if len(lhs) == len(rhs):
+            return 0
+        if len(lhs) < len(rhs):
+            return -1
+        return 1
