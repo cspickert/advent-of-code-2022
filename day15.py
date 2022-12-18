@@ -22,7 +22,7 @@ class Solution(BaseSolution):
         grid = defaultdict(int)
         for sensor, beacon in data:
             dist = self.get_distance(sensor, beacon)
-            for point in self.get_all_points_within(sensor, dist):
+            for point in self.get_all_points_within(sensor, self.part1_y, dist):
                 grid[point] += 1
         beacons = {beacon for _, beacon in data}
         return self.count_coverage(grid, y=self.part1_y, exclude=beacons)
@@ -44,11 +44,11 @@ class Solution(BaseSolution):
         x2, y2 = point2
         return abs(x1 - x2) + abs(y1 - y2)
 
-    def get_all_points_within(self, point, distance):
+    def get_all_points_within(self, point, row_y, distance):
         point_x, _ = point
         min_x, max_x = point_x - distance, point_x + distance
         for x in range(min_x, max_x + 1):
-            other = (x, self.part1_y)
+            other = (x, row_y)
             if self.get_distance(point, other) <= distance:
                 yield other
 
