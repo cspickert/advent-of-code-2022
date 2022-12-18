@@ -18,11 +18,31 @@ class Solution(BaseSolution):
 
         return cave
 
-    def part1(self, data):
-        return self.drop_all_sand(data)
+    def part1(self, cave):
+        self.floor = False
 
-    def part2(self, data):
-        pass
+        # Optimization: create an `is_in_abyss` method that caches rock positions.
+        max_row = max(pos[0] for pos in cave if cave[pos] == "#")
+        min_col = min(pos[1] for pos in cave if cave[pos] == "#")
+        max_col = max(pos[1] for pos in cave if cave[pos] == "#")
+
+        self.is_in_abyss = lambda cave, sand: not (
+            sand[0] in range(max_row + 1) and sand[1] in range(min_col, max_col + 1)
+        )
+
+        return self.drop_all_sand(cave)
+
+    def part2(self, cave):
+        self.floor = True
+
+        # Set the floor row.
+        max_row = max(pos[0] for pos in cave if cave[pos] == "#")
+        self.floor_row = max_row + 2
+
+        # Change `is_in_abyss` to always return `False`.
+        self.is_in_abyss = lambda cave, sand: False
+
+        return self.drop_all_sand(cave)
 
     # Helpers
 
@@ -32,13 +52,16 @@ class Solution(BaseSolution):
             while self.drop_sand(cave):
                 count += 1
         except self.Abyss:
-            return count
+            pass
+        return count
 
     def drop_sand(self, cave):
         pos = (0, 500)
+        if pos in cave:
+            return False
         self.start_sand(cave, pos)
-        final_pos = self.drop_sand_helper(cave, pos)
-        return pos != final_pos
+        self.drop_sand_helper(cave, pos)
+        return True
 
     def drop_sand_helper(self, cave, orig_pos):
         pos = orig_pos
@@ -54,7 +77,6 @@ class Solution(BaseSolution):
             if self.is_in_abyss(cave, pos):
                 self.stop_sand(cave, pos)
                 raise self.Abyss
-        return pos
 
     def get_next_sand_pos(self, cave, pos):
         row, col = pos
@@ -78,6 +100,7 @@ class Solution(BaseSolution):
         return pos
 
     def start_sand(self, cave, pos):
+        assert pos not in cave
         cave[pos] = "+"
 
     def move_sand(self, cave, old_pos, new_pos):
@@ -92,15 +115,10 @@ class Solution(BaseSolution):
             cave[pos] = "o"
 
     def is_valid_sand_pos(self, cave, pos):
+        if self.floor:
+            if pos[0] >= self.floor_row:
+                return False
         return pos not in cave
-
-    def is_in_abyss(self, cave, sand):
-        max_row = max(pos[0] for pos in cave if cave[pos] == "#")
-        min_col = min(pos[1] for pos in cave if cave[pos] == "#")
-        max_col = max(pos[1] for pos in cave if cave[pos] == "#")
-        return not (
-            sand[0] in range(max_row + 1) and sand[1] in range(min_col, max_col + 1)
-        )
 
     def trace_line(self, cave, start, end):
         # Horizontal
