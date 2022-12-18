@@ -45,14 +45,12 @@ class Solution(BaseSolution):
         return abs(x1 - x2) + abs(y1 - y2)
 
     def get_all_points_within(self, point, distance):
-        point_x, point_y = point
+        point_x, _ = point
         min_x, max_x = point_x - distance, point_x + distance
-        min_y, max_y = point_y - distance, point_y + distance
-        for y in range(min_y, max_y + 1):
-            for x in range(min_x, max_x + 1):
-                other = (x, y)
-                if self.get_distance(point, other) <= distance:
-                    yield other
+        for x in range(min_x, max_x + 1):
+            other = (x, self.part1_y)
+            if self.get_distance(point, other) <= distance:
+                yield other
 
     def print_grid(self, grid, data):
         beacons = {beacon for _, beacon in data}
